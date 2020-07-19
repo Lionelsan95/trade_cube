@@ -1,0 +1,6 @@
+
+ The following SQL statements will be executed:
+
+     CREATE TABLE user_chain (id INT AUTO_INCREMENT NOT NULL, blockchain_id INT NOT NULL, seuil DOUBLE PRECISION NOT NULL, tranche DOUBLE PRECISION NOT NULL, cle VARCHAR(255) NOT NULL, active INT NOT NULL, INDEX IDX_53C0E39298073AE1 (blockchain_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+     CREATE TABLE blockchain (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+     ALTER TABLE user_chain ADD CONSTRAINT FK_53C0E39298073AE1 FOREIGN KEY (blockchain_id) REFERENCES blockchain (id);
