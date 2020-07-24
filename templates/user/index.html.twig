@@ -68,10 +68,43 @@
     </table>
     {% else %}
 
-        <button><a href="">Modifier ses information</a></button>
-        <button><a href="">Ajouter une blockchain</a></button>
+        <a class="btn btn-primary" href="{{ path('wallet_new') }}">Ajouter un portefeuille</a>
 
-        <h3>Mes blockchains</h3>
+        <h3>Mes portefeuilles</h3>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Cryptomonnaie</th>
+                <th scope="col">Platform</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for w in wallets %}
+                <tr>
+                    <th scope="row">{{ w.num }}</th>
+                    <td>
+                        {{ w.nom }}
+                    </td>
+                    <td>
+                        {{ w.crypto }}
+                    </td>
+                    <td>
+                        {{ w.platform }}
+                    </td>
+                    <td>
+                        <a href="{{ path('wallet_show', {'id': w.id}) }}"><i class="far fa-eye fa-2x"></i></a>
+                        <a href="{{ path('wallet_edit', {'id': w.id}) }}"><i class="far fa-edit fa-2x"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div id="chart_div"></div>
 
     {% endif %}
 

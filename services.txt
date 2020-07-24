@@ -6,11 +6,19 @@ Symfony Container Services
   Service ID                                                                           Class name                                                                                      
  ------------------------------------------------------------------------------------ ------------------------------------------------------------------------------------------------ 
   App\Controller\BlockchainController                                                  App\Controller\BlockchainController                                                             
+  App\Controller\CryptomonnaieController                                               App\Controller\CryptomonnaieController                                                          
+  App\Controller\DefaultController                                                     App\Controller\DefaultController                                                                
   App\Controller\UserController                                                        App\Controller\UserController                                                                   
+  App\Controller\WalletController                                                      App\Controller\WalletController                                                                 
   App\Form\BlockchainType                                                              App\Form\BlockchainType                                                                         
+  App\Form\CryptomonnaieType                                                           App\Form\CryptomonnaieType                                                                      
   App\Form\UserType                                                                    App\Form\UserType                                                                               
+  App\Form\WalletType                                                                  App\Form\WalletType                                                                             
   App\Repository\BlockchainRepository                                                  App\Repository\BlockchainRepository                                                             
+  App\Repository\CryptomonnaieRepository                                               App\Repository\CryptomonnaieRepository                                                          
   App\Repository\UserRepository                                                        App\Repository\UserRepository                                                                   
+  App\Repository\WalletRepository                                                      App\Repository\WalletRepository                                                                 
+  App\Service\Kraken                                                                   App\Service\Kraken                                                                              
   Doctrine\Common\Annotations\Reader                                                   alias for "annotations.cached_reader"                                                           
   Doctrine\Common\Persistence\ManagerRegistry                                          alias for "doctrine"                                                                            
   Doctrine\DBAL\Connection                                                             alias for "doctrine.dbal.default_connection"                                                    
@@ -98,7 +106,7 @@ Symfony Container Services
   annotations.reader                                                                   Doctrine\Common\Annotations\AnnotationReader                                                    
   argument_metadata_factory                                                            Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory                         
   argument_resolver                                                                    alias for "debug.argument_resolver"                                                             
-  argument_resolver.controller_locator                                                 alias for ".service_locator.x8DSknm"                                                            
+  argument_resolver.controller_locator                                                 alias for ".service_locator.Lq1OgZu"                                                            
   argument_resolver.default                                                            alias for "debug.argument_resolver.default"                                                     
   argument_resolver.not_tagged_controller                                              alias for "debug.argument_resolver.not_tagged_controller"                                       
   argument_resolver.request                                                            alias for "debug.argument_resolver.request"                                                     
@@ -660,6 +668,7 @@ Symfony Container Services
   templating.loader.filesystem                                                         Symfony\Bundle\FrameworkBundle\Templating\Loader\FilesystemLoader                               
   templating.locator                                                                   Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator                                
   templating.name_parser                                                               Symfony\Bundle\FrameworkBundle\Templating\TemplateNameParser                                    
+  trade.kraken                                                                         alias for "App\Service\Kraken"                                                                  
   translation.dumper.csv                                                               Symfony\Component\Translation\Dumper\CsvFileDumper                                              
   translation.dumper.ini                                                               Symfony\Component\Translation\Dumper\IniFileDumper                                              
   translation.dumper.json                                                              Symfony\Component\Translation\Dumper\JsonFileDumper                                             

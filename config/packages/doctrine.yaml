@@ -5,10 +5,10 @@ doctrine:
             default:
                 dbname:         'trade_cube'
                 user:           'root'
-                password:       'cpLurB1c9G3RvWZY'
+                password:       ''
                 host:           '127.0.0.1'
                 driver:         'pdo_mysql'
-                server_version: '5.0.12'
+                server_version: '7.4.8'
         #url: '%env(resolve:DATABASE_URL)%'
 
         # IMPORTANT: You MUST configure your server version,

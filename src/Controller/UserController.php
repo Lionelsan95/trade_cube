@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,6 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use \FOS\UserBundle\FOSUserEvents;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
  * @Route("/user")
@@ -23,15 +26,18 @@ class UserController extends AbstractController
     private $dispatcher;
     private $authenticationUtils;
     private $authChecker;
+    private $security;
+    private $tokenManager;
 
-    public function __construct($formFactory, $userManager, $dispatcher, $authenticationUtils,AuthorizationCheckerInterface $authChecker)
+    public function __construct($formFactory, $userManager, $dispatcher, $authenticationUtils,AuthorizationCheckerInterface $authChecker, Security $security,CsrfTokenManagerInterface $tokenManager=null)
     {
         $this->formFactory = $formFactory;
         $this->userManager = $userManager;
         $this->dispatcher = $dispatcher;
         $this->authenticationUtils = $authenticationUtils;
         $this->authChecker = $authChecker;
-
+        $this->security = $security;
+        $this->tokenManager = $tokenManager;
     }
 
     /**
@@ -39,8 +45,10 @@ class UserController extends AbstractController
      */
     public function index(): Response
     {
-        $blockchains = array();
-        if($this->authChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+
+        $wallets = array();
+
+        if($this->authChecker->isGranted('ROLE_ADMIN')) {
 
             $users = $this->getDoctrine()
                 ->getRepository(User::class)
@@ -48,13 +56,28 @@ class UserController extends AbstractController
 
             return $this->render('user/index.html.twig', [
                 'users' => $users,
-                'blockchain'=>$blockchains
+                'wallets'=>$wallets
             ]);
-        }
+        }else if ($this->authChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')){
 
-        return $this->render('user/index.html.twig',[
-            'blockchain'=>$blockchains
-        ]);
+            $user = $this->security->getUser();
+            $i=0;
+            foreach($user->getWallets() as $wallet){
+                $wallets[] = [
+                    "num"=>(++$i),
+                    'id'=>$wallet->getId(),
+                    'crypto'=>$wallet->getCryptomonnaie()->getName(),
+                    'nom'=>$wallet->getNom(),
+                    'platform'=>$wallet->getBlockchain()->getNom(),
+                ];
+            }
+
+            return $this->render('user/index.html.twig',[
+                'wallets'=>$wallets
+            ]);
+        }else
+            return $this->redirectToRoute('user_login');
+
     }
 
     /**
@@ -62,14 +85,18 @@ class UserController extends AbstractController
      * @param Request $request
      */
     public function loginAction(Request $request){
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
-
-        if($this->authChecker->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+        if($this->authChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             return $this->redirectToRoute('user_index');
+        }
+
+        $csrfToken = $this->tokenManager
+            ? $this->tokenManager->getToken('authenticate')->getValue()
+            : null;
 
         return $this->render('user/login.html.twig', array(
             'last_username' => $this->authenticationUtils->getLastUsername(),
             'error'         => $this->authenticationUtils->getLastAuthenticationError(),
+            'csrf_token' =>$csrfToken
         ));
     }
 

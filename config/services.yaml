@@ -16,18 +16,32 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Tests,Kernel.php}'
+        exclude:
+            - '../src/{DependencyInjection,Entity,Tests,Kernel.php}'
+            - '../src/Service/{API.php,KrakenAPI.php,KrakenAPIException.php}'
+
+    blockchain:
+        alias: App\Service\BlockChain
+        public: true
+
+    trade.kraken:
+        alias: App\Service\Kraken
+        public: true
+
+
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
     App\Controller\UserController:
         arguments:
             - '@fos_user.registration.form.factory'
             - '@fos_user.user_manager'
             - '@event_dispatcher'
             - '@security.authentication_utils'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Wallet{% endblock %}
+
+{% block body %}
+    <h1>Create new Wallet</h1>
+
+    {{ include('wallet/_form.html.twig') }}
+
+    <a href="{{ path('wallet_index') }}">back to list</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            let username = "{{ app.user.username }}", activate="";
+            $("#wallet_user").children('option').each(function(){
+                if( $(this).html() == username )
+                    $(this).attr('selected','selected');
+            });
+            $("#wallet_user").parent('div').css('display','none');
+
+            activate = '<div><label for="wallet_activate" class="required">Trading</label><br/><input data-onstyle="success" data-offstyle="danger" type="checkbox" id="wallet_trading" name="wallet[trading]" required="required" maxlength="50" /></div>';
+
+            $("#wallet").prepend(activate);
+
+            $("#wallet>div").addClass('form-group');
+            $("#wallet>div>input").addClass('form-control');
+            $("#wallet>div>select").addClass('custom-select');
+
+
+            $('#wallet_trading').bootstrapToggle({
+                on: 'Activer',
+                off: 'Désactiver'
+            });
+
+        });
+    </script>
+{% endblock %}

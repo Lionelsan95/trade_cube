@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\BlockchainRepository;
+use App\Repository\CryptomonnaieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=BlockchainRepository::class)
+ * @ORM\Entity(repositoryClass=CryptomonnaieRepository::class)
  */
-class Blockchain
+class Cryptomonnaie
 {
     /**
      * @ORM\Id()
@@ -20,31 +20,28 @@ class Blockchain
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=20)
      */
-    private $nom;
+    private $name;
 
     /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $cle_api;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Wallet", mappedBy="blockchain")
+     * @ORM\OneToMany(targetEntity="App\Entity\Wallet", mappedBy="cryptomonnaie")
      */
     private $wallets;
+
+    /**
+     * @ORM\Column(type="string", length=5)
+     */
+    private $symbol;
 
     public function __construct()
     {
         $this->wallets = new ArrayCollection();
     }
 
-    /**
-     * @return string
-     */
     public function __toString()
     {
-        return (string) $this->getNom();
+        return $this->getName()." - ".$this->getSymbol();
     }
 
     public function getId(): ?int
@@ -52,14 +49,26 @@ class Blockchain
         return $this->id;
     }
 
-    public function getCleApi(): ?string
+    public function getName(): ?string
     {
-        return $this->cle_api;
+        return $this->name;
     }
 
-    public function setCleApi(string $cle_api): self
+    public function setName(string $name): self
     {
-        $this->cle_api = $cle_api;
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSymbol(): ?string
+    {
+        return $this->symbol;
+    }
+
+    public function setSymbol(string $symbol): self
+    {
+        $this->symbol = $symbol;
 
         return $this;
     }
@@ -76,7 +85,7 @@ class Blockchain
     {
         if (!$this->wallets->contains($wallet)) {
             $this->wallets[] = $wallet;
-            $wallet->setBlockchain($this);
+            $wallet->setCryptomonnaie($this);
         }
 
         return $this;
@@ -87,22 +96,10 @@ class Blockchain
         if ($this->wallets->contains($wallet)) {
             $this->wallets->removeElement($wallet);
             // set the owning side to null (unless already changed)
-            if ($wallet->getBlockchain() === $this) {
-                $wallet->setBlockchain(null);
+            if ($wallet->getCryptomonnaie() === $this) {
+                $wallet->setCryptomonnaie(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
 
         return $this;
     }

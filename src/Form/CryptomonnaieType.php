@@ -2,25 +2,25 @@
 
 namespace App\Form;
 
-use App\Entity\Blockchain;
+use App\Entity\Cryptomonnaie;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BlockchainType extends AbstractType
+class CryptomonnaieType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nom')
-            ->add('cle_api')
+            ->add('name')
+            ->add('symbol')
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Blockchain::class,
+            'data_class' => Cryptomonnaie::class,
         ]);
     }
 }

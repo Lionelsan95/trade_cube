@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wallet{% endblock %}
+
+{% block body %}
+    <h1>Wallet</h1>
+
+    <a href="{{ path('user_index') }}"><i class="fa fa-arrow-left fa-2x" aria-hidden="true"></i></a>
+
+    <a href="{{ path('wallet_edit', {'id': wallet.id}) }}"><i class="fas fa-edit fa-2x" aria-hidden="true"></i></a><br><br>
+
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ wallet.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ wallet.nom }}</td>
+            </tr>
+            <tr>
+                <th>Signature</th>
+                <td>{{ wallet.signature }}</td>
+            </tr>
+            <tr>
+                <th>Cle_prive</th>
+                <td>{{ wallet.clePrive }}</td>
+            </tr>
+            <tr>
+                <th>Cle_public</th>
+                <td>{{ wallet.clePublic }}</td>
+            </tr>
+            <tr>
+                <th>Seuil</th>
+                <td>{{ wallet.seuil }}</td>
+            </tr>
+            <tr>
+                <th>Tranche</th>
+                <td>{{ wallet.tranche }}</td>
+            </tr>
+            <tr>
+                <th>Solde</th>
+                <td>{{ wallet.solde }}</td>
+            </tr>
+            <tr>
+                <th>Cryptomonnaie</th>
+                <td>{{ wallet.cryptomonnaie.name }} - {{ wallet.cryptomonnaie.symbol }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let title = "Cours de change {{ wallet.cryptomonnaie.name }}",
+                datum = Array(Array.of('Date', 'Euros')),
+                data  = null,
+                options = {
+                    title: title,
+                    curveType: 'function',
+                    legend: { position: 'bottom' }
+                },
+                chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+            {%  for v in history %}
+                datum.push(Array.of("{{ v.x }}",parseFloat("{{ v.y }}")))
+            {% endfor %}
+
+            data = google.visualization.arrayToDataTable(datum);
+            chart.draw(data, options);
+        }
+    </script>
+
+{% endblock %}

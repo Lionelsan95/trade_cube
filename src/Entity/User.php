@@ -52,9 +52,9 @@ class User extends BaseUser{
     private $codepin;
 
     /**
-     * @ORM\OneToMany(targetEntity="UserChain", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\Wallet", mappedBy="user")
      */
-    private $blockchains;
+    private $wallets;
 
     /**
      * @ORM\Column(type="date", nullable=true)
@@ -65,6 +65,7 @@ class User extends BaseUser{
     {
         parent::__construct();
         $this->blockchains = new ArrayCollection();
+        $this->wallets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,7 +78,7 @@ class User extends BaseUser{
         return $this->nom;
     }
 
-    public function setNom(string $nom): self
+    public function setNom(?string $nom): self
     {
         $this->nom = $nom;
 
@@ -89,7 +90,7 @@ class User extends BaseUser{
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): self
+    public function setPrenom(?string $prenom): self
     {
         $this->prenom = $prenom;
 
@@ -137,7 +138,7 @@ class User extends BaseUser{
         return $this->codepin;
     }
 
-    public function setCodepin(string $codepin): self
+    public function setCodepin(?string $codepin): self
     {
         $this->codepin = $codepin;
 
@@ -157,30 +158,30 @@ class User extends BaseUser{
     }
 
     /**
-     * @return Collection|UserChain[]
+     * @return Collection|Wallet[]
      */
-    public function getBlockchains(): Collection
+    public function getWallets(): Collection
     {
-        return $this->blockchains;
+        return $this->wallets;
     }
 
-    public function addBlockchain(UserChain $blockchain): self
+    public function addWallet(Wallet $wallet): self
     {
-        if (!$this->blockchains->contains($blockchain)) {
-            $this->blockchains[] = $blockchain;
-            $blockchain->setUser($this);
+        if (!$this->wallets->contains($wallet)) {
+            $this->wallets[] = $wallet;
+            $wallet->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeBlockchain(UserChain $blockchain): self
+    public function removeWallet(Wallet $wallet): self
     {
-        if ($this->blockchains->contains($blockchain)) {
-            $this->blockchains->removeElement($blockchain);
+        if ($this->wallets->contains($wallet)) {
+            $this->wallets->removeElement($wallet);
             // set the owning side to null (unless already changed)
-            if ($blockchain->getUser() === $this) {
-                $blockchain->setUser(null);
+            if ($wallet->getUser() === $this) {
+                $wallet->setUser(null);
             }
         }
 

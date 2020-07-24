@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Cryptomonnaie{% endblock %}
+
+{% block body %}
+    <h1>Edit Cryptomonnaie</h1>
+
+    {{ include('cryptomonnaie/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('cryptomonnaie_index') }}">back to list</a>
+
+    {{ include('cryptomonnaie/_delete_form.html.twig') }}
+{% endblock %}

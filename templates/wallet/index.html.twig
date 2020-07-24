@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wallet index{% endblock %}
+
+{% block body %}
+    <h1>Wallet index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Signature</th>
+                <th>Cle_prive</th>
+                <th>Cle_public</th>
+                <th>Seuil</th>
+                <th>Tranche</th>
+                <th>Solde</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for wallet in wallets %}
+            <tr>
+                <td>{{ wallet.id }}</td>
+                <td>{{ wallet.nom }}</td>
+                <td>{{ wallet.signature }}</td>
+                <td>{{ wallet.clePrive }}</td>
+                <td>{{ wallet.clePublic }}</td>
+                <td>{{ wallet.seuil }}</td>
+                <td>{{ wallet.tranche }}</td>
+                <td>{{ wallet.solde }}</td>
+                <td>
+                    <a href="{{ path('wallet_show', {'id': wallet.id}) }}"><i class="far fa-eye fa-2x"></i></a>
+                    <a href="{{ path('wallet_edit', {'id': wallet.id}) }}"><i class="far fa-edit fa-2x"></i></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('wallet_new') }}">Create new</a>
+{% endblock %}

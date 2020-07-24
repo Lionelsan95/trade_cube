@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cryptomonnaie{% endblock %}
+
+{% block body %}
+    <h1>Cryptomonnaie</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ cryptomonnaie.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ cryptomonnaie.name }}</td>
+            </tr>
+            <tr>
+                <th>Symbol</th>
+                <td>{{ cryptomonnaie.symbol }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('cryptomonnaie_index') }}">back to list</a>
+
+    <a href="{{ path('cryptomonnaie_edit', {'id': cryptomonnaie.id}) }}">edit</a>
+
+    {{ include('cryptomonnaie/_delete_form.html.twig') }}
+{% endblock %}

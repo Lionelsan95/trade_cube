@@ -10,6 +10,7 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
+                <th>Cle_api</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -18,6 +19,7 @@
             <tr>
                 <td>{{ blockchain.id }}</td>
                 <td>{{ blockchain.name }}</td>
+                <td>{{ blockchain.cleApi }}</td>
                 <td>
                     <a href="{{ path('blockchain_show', {'id': blockchain.id}) }}">show</a>
                     <a href="{{ path('blockchain_edit', {'id': blockchain.id}) }}">edit</a>
@@ -25,7 +27,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="3">no records found</td>
+                <td colspan="4">no records found</td>
             </tr>
         {% endfor %}
         </tbody>

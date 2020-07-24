@@ -3,5 +3,6 @@
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
+    <br/><a href="{{ path("user_registration") }}">Inscription</a><br/><br/>
     {{ include('@FOSUser/Security/login_content.html.twig') }}
 {% endblock body %}
