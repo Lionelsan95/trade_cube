@@ -8,16 +8,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use \FOS\UserBundle\FOSUserEvents;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * @Route("/user")
+ *
+ * @ApiResource
  */
 class UserController extends AbstractController
 {
@@ -28,8 +36,9 @@ class UserController extends AbstractController
     private $authChecker;
     private $security;
     private $tokenManager;
+    private $passwordEncoder;
 
-    public function __construct($formFactory, $userManager, $dispatcher, $authenticationUtils,AuthorizationCheckerInterface $authChecker, Security $security,CsrfTokenManagerInterface $tokenManager=null)
+    public function __construct(UserPasswordEncoder $passwordEncoder, $formFactory, $userManager, $dispatcher, $authenticationUtils,AuthorizationCheckerInterface $authChecker, Security $security,CsrfTokenManagerInterface $tokenManager=null)
     {
         $this->formFactory = $formFactory;
         $this->userManager = $userManager;
@@ -38,12 +47,42 @@ class UserController extends AbstractController
         $this->authChecker = $authChecker;
         $this->security = $security;
         $this->tokenManager = $tokenManager;
+        $this->passwordEncoder = $passwordEncoder;
+    }
+
+    /**
+     * @Route(
+     *     path="/parametre",
+     *     name="user_parametre",
+     *     methods={"GET"}
+     *)
+     * @return Response
+     */
+    public function parametreAction() : Response
+    {
+        if ($this->authChecker->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+        {
+            $wallets = [];
+            foreach($this->security->getUser()->getWallets() as $wallet){
+                $wallets[] = [
+                    'sign'=>$wallet->getSignature(),
+                    'symbol'=>$wallet->getCurrency()->getName(),
+                    'nom'=>$wallet->getName(),
+                    'active'=>$wallet->getTrading(),
+                ];
+            }
+
+            return $this->render('user/parametre.html.twig',[
+                'wallet'=>$wallets
+            ]);
+        }else
+            return $this->redirectToRoute('user_login');
     }
 
     /**
      * @Route("/", name="user_index", methods={"GET"})
      */
-    public function index(): Response
+    public function indexAction(): Response
     {
 
         $wallets = array();
@@ -60,15 +99,14 @@ class UserController extends AbstractController
             ]);
         }else if ($this->authChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')){
 
-            $user = $this->security->getUser();
             $i=0;
-            foreach($user->getWallets() as $wallet){
+            foreach($this->security->getUser()->getWallets() as $wallet){
                 $wallets[] = [
                     "num"=>(++$i),
                     'id'=>$wallet->getId(),
-                    'crypto'=>$wallet->getCryptomonnaie()->getName(),
-                    'nom'=>$wallet->getNom(),
-                    'platform'=>$wallet->getBlockchain()->getNom(),
+                    'crypto'=>$wallet->getCurrency()->getName(),
+                    'nom'=>$wallet->getName(),
+                    'platform'=>$wallet->getBlockchain()->getName(),
                 ];
             }
 
@@ -76,28 +114,8 @@ class UserController extends AbstractController
                 'wallets'=>$wallets
             ]);
         }else
-            return $this->redirectToRoute('user_login');
+            return $this->redirectToRoute('security_login');
 
-    }
-
-    /**
-     * @Route("/login", name="user_login", methods={"GET"})
-     * @param Request $request
-     */
-    public function loginAction(Request $request){
-        if($this->authChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            return $this->redirectToRoute('user_index');
-        }
-
-        $csrfToken = $this->tokenManager
-            ? $this->tokenManager->getToken('authenticate')->getValue()
-            : null;
-
-        return $this->render('user/login.html.twig', array(
-            'last_username' => $this->authenticationUtils->getLastUsername(),
-            'error'         => $this->authenticationUtils->getLastAuthenticationError(),
-            'csrf_token' =>$csrfToken
-        ));
     }
 
     /**

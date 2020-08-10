@@ -2,6 +2,13 @@ doctrine:
     dbal:
         default_connection: default
         connections:
+            test:
+                dbname:         'trade_cube_test'
+                user:           'root'
+                password:       ''
+                host:           '127.0.0.1'
+                driver:         'pdo_mysql'
+                server_version: '7.4.8'
             default:
                 dbname:         'trade_cube'
                 user:           'root'

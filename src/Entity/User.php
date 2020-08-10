@@ -6,12 +6,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class User
  * @ORM\Entity
  * @ORM\Table(name="fos_user")
  * @package App\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get"={"get"={"method"="POST"}},
+ *     },
+ *     itemOperations={
+ *          "get"
+ *     }
+ * )
  */
 class User extends BaseUser{
     /**
@@ -22,19 +35,34 @@ class User extends BaseUser{
     protected $id;
 
     /**
+     *
      * @ORM\Column(type="string", length=100, nullable=true)
+     * @Assert\Length(
+     *     min=2,
+     *     max=100
+     * )
      */
-    private $nom;
+    private $name;
 
     /**
+     *
      * @ORM\Column(type="string", length=100, nullable=true)
+     * @Assert\Length(
+     *     min=2,
+     *     max=100
+     * )
      */
-    private $prenom;
+    private $surname;
 
     /**
+     * @Groups("user")
      * @ORM\Column(type="string", length=20, nullable=true)
+     * @Assert\Length(
+     *     min=6,
+     *     max=20
+     * )
      */
-    private $telephone;
+    private $phonenumber;
 
     /**
      * @ORM\Column(type="string", length=150, nullable=true)
@@ -43,6 +71,7 @@ class User extends BaseUser{
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
+     * @Assert\Iban()
      */
     private $iban;
 
@@ -58,8 +87,9 @@ class User extends BaseUser{
 
     /**
      * @ORM\Column(type="date", nullable=true)
+     * @Assert\Date()
      */
-    private $date_naiss;
+    private $birthdate;
 
     public function __construct()
     {
@@ -71,42 +101,6 @@ class User extends BaseUser{
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(?string $nom): self
-    {
-        $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(?string $prenom): self
-    {
-        $this->prenom = $prenom;
-
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(?string $telephone): self
-    {
-        $this->telephone = $telephone;
-
-        return $this;
     }
 
     public function getAdresse(): ?string
@@ -145,18 +139,6 @@ class User extends BaseUser{
         return $this;
     }
 
-    public function getDateNaiss(): ?\DateTimeInterface
-    {
-        return $this->date_naiss;
-    }
-
-    public function setDateNaiss(?\DateTimeInterface $date_naiss): self
-    {
-        $this->date_naiss = $date_naiss;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Wallet[]
      */
@@ -184,6 +166,54 @@ class User extends BaseUser{
                 $wallet->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSurname(): ?string
+    {
+        return $this->surname;
+    }
+
+    public function setSurname(?string $surname): self
+    {
+        $this->surname = $surname;
+
+        return $this;
+    }
+
+    public function getPhonenumber(): ?string
+    {
+        return $this->phonenumber;
+    }
+
+    public function setPhonenumber(?string $phonenumber): self
+    {
+        $this->phonenumber = $phonenumber;
+
+        return $this;
+    }
+
+    public function getBirthdate(): ?\DateTimeInterface
+    {
+        return $this->birthdate;
+    }
+
+    public function setBirthdate(?\DateTimeInterface $birthdate): self
+    {
+        $this->birthdate = $birthdate;
 
         return $this;
     }

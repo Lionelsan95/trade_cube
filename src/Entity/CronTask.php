@@ -18,11 +18,6 @@ class CronTask
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $etat;
-
-    /**
      * @ORM\OneToOne(targetEntity="App\Entity\Wallet")
      */
     private $wallet;
@@ -35,18 +30,6 @@ class CronTask
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getEtat(): ?int
-    {
-        return $this->etat;
-    }
-
-    public function setEtat(int $etat): self
-    {
-        $this->etat = $etat;
-
-        return $this;
     }
 
     public function getParametre(): ?\DateTimeInterface

@@ -22,6 +22,6 @@ class DefaultController extends AbstractController
      * @Route("/", name="index", methods={"GET"})
      */
     public function indexAction(){
-        return $this->redirectToRoute('user_login');
+        return $this->redirectToRoute('security_login');
     }
 }

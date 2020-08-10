@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Parametres{% endblock %}
+
+{% block body %}
+
+    <br/><br/>
+
+    <div class="row">
+
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">Informations</div>
+                <div class="card-body">
+                    <h5 class="card-title">Informations utilisateurs</h5>
+                    <div class="card-text">
+
+                        <div class="form-group row">
+                            <p class="col-sm-4"> Identifiant </p>
+                            <p class="col-sm-8">{{ app.user.username }}</p>
+                        </div>
+
+                        <div class="form-group row">
+                            <p class="col-sm-4"> Nom </p>
+                            <p class="col-sm-8">{{ app.user.name }}</p>
+                        </div>
+
+                        <div class="form-group row">
+                            <p class="col-sm-4"> Prénom </p>
+                            <p class="col-sm-8">{{ app.user.surname }}</p>
+                        </div>
+
+                        <div class="form-group row">
+                            <p class="col-sm-4"> Téléphone </p>
+                            <p class="col-sm-8">{{ app.user.phonenumber }}</p>
+                        </div>
+
+                        <div class="form-group row">
+                            <p class="col-sm-4"> Email </p>
+                            <p class="col-sm-8">{{ app.user.email }}</p>
+                        </div>
+
+                    </div>
+                    <a href="{{ path('user_edit', {'id': app.user.id}) }}" class="btn btn-primary">
+                        <i class="fas fa-edit" aria-hidden="true"></i>
+                        Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">Portefeuilles</div>
+                <div class="card-body">
+                    <h5 class="card-title">Activer / Désactiver portefeuilles</h5>
+                    <div class="card-text">
+                        <form>
+                            {% for w in wallet %}
+                                <div class="form-group row">
+                                    <label for="{{ w.sign }}" class="col-sm-8 col-form-label">{{ w.nom }} ({{ w.symbol }}) </label>
+                                    <div class="col-sm-4">
+                                        <input type="checkbox" {% if w.active == "1" %}checked{% endif %} class="toogle" id="{{ w.sign }}"/>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </form>
+                    </div>
+                    <a href="" id="update" class="btn btn-primary">
+                        Valider
+                        <div id="spinner" class="spinner-border text-danger" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+        <div class="toast" style="position: absolute; top: 0; right: 0;">
+            <div class="toast-header">
+                <img src="..." class="rounded mr-2" alt="...">
+                <strong class="mr-auto">Notification</strong>
+                <small></small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                Portefeuilles mis à jour...
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            $("#spinner").hide();
+            $('.toast').toast({
+                delay: 3000
+            });
+
+            $(".toogle")
+                .attr('data-onstyle','success')
+                .attr('data-offstyle','danger')
+                .bootstrapToggle({
+                    on: 'Activer',
+                    off: 'Désactiver'
+                });
+            let i=0;
+            $("#update")
+                .on('click', function(e){
+                    e.preventDefault();
+                    $(this).attr('disabled','disabled');
+                    let on = Array.of(), off = Array.of();
+                    $("#spinner").show();
+
+                    //Récupération des portefeuilles activée
+                    $('.toogle').each(function(){
+                        if($(this).is(':checked'))
+                            on.push($(this).attr('id'));
+                        else
+                            off.push($(this).attr('id'));
+                    });
+
+                    $.ajax({
+                        url: '{{ path('active_trading') }}',
+                        type: 'POST',
+                        data: 'on='+on.join(',')+'&off='+off.join(','),
+                        success: function(data){
+                            if(data.result == 1)
+                                $(".toast").toast('show');
+                            $("#spinner").hide();
+                        },
+                        error: function(data){
+                            alert('error...');
+                            $("#spinner").hide();
+                        }
+                    });
+
+                });
+        });
+    </script>
+{% endblock %}

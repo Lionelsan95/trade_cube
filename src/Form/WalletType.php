@@ -13,14 +13,14 @@ class WalletType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nom')
+            ->add('name')
             ->add('signature')
-            ->add('cle_prive')
-            ->add('cle_public')
-            ->add('seuil')
+            ->add('apikey')
+            ->add('secretkey')
+            ->add('sill')
             ->add('tranche')
-            ->add('cryptomonnaie')
-            ->add('user')
+            ->add('currency')
+            //->add('user')
             ->add('blockchain')
         ;
     }

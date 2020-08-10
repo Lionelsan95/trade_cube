@@ -4,9 +4,20 @@ namespace App\Entity;
 
 use App\Repository\WalletRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\WalletRepository", repositoryClass=WalletRepository::class)
+ *
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get"={"get"={"method"="POST"}},
+ *     },
+ *     itemOperations={
+ *          "get"
+ *     }
+ * )
  */
 class Wallet
 {
@@ -19,44 +30,83 @@ class Wallet
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min=3,
+     *     max=50
+     * )
      */
-    private $nom;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min=10,
+     *     max=50
+     * )
+     * @Assert\Unique()
      */
     private $signature;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min=10,
+     *     max=50
+     * )
+     * @Assert\Unique()
      */
-    private $cle_prive;
+    private $apikey;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min=10,
+     *     max=50
+     * )
+     * @Assert\Unique()
      */
-    private $cle_public;
+    private $secretkey;
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\Positive()
      */
-    private $seuil;
+    private $sill;
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\Positive
      */
     private $tranche;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\GreaterThanOrEqual(
+     *     value=0
+     * )
+     * @Assert\LessThanOrEqual(
+     *     value= 1
+     * )
+     */
+    private $trading;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Cryptomonnaie", inversedBy="wallets")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $cryptomonnaie;
+    private $currency;
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\GreaterThanOrEqual(
+     *     value=0
+     * )
      */
-    private $solde;
+    private $balance;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
@@ -72,29 +122,18 @@ class Wallet
 
     public function __construct()
     {
-        $this->solde = 0;
+        $this->setBalance(0);
+        $this->setTrading("0");
     }
 
     public function __toString()
     {
-        return $this->getNom();
+        return $this->getName();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
-
-        return $this;
     }
 
     public function getSignature(): ?string
@@ -109,42 +148,6 @@ class Wallet
         return $this;
     }
 
-    public function getClePrive(): ?string
-    {
-        return $this->cle_prive;
-    }
-
-    public function setClePrive(string $cle_prive): self
-    {
-        $this->cle_prive = $cle_prive;
-
-        return $this;
-    }
-
-    public function getClePublic(): ?string
-    {
-        return $this->cle_public;
-    }
-
-    public function setClePublic(string $cle_public): self
-    {
-        $this->cle_public = $cle_public;
-
-        return $this;
-    }
-
-    public function getSeuil(): ?float
-    {
-        return $this->seuil;
-    }
-
-    public function setSeuil(float $seuil): self
-    {
-        $this->seuil = $seuil;
-
-        return $this;
-    }
-
     public function getTranche(): ?float
     {
         return $this->tranche;
@@ -153,30 +156,6 @@ class Wallet
     public function setTranche(float $tranche): self
     {
         $this->tranche = $tranche;
-
-        return $this;
-    }
-
-    public function getSolde(): ?float
-    {
-        return $this->solde;
-    }
-
-    public function setSolde(float $solde): self
-    {
-        $this->solde = $solde;
-
-        return $this;
-    }
-
-    public function getCryptomonnaie(): ?Cryptomonnaie
-    {
-        return $this->cryptomonnaie;
-    }
-
-    public function setCryptomonnaie(?Cryptomonnaie $cryptomonnaie): self
-    {
-        $this->cryptomonnaie = $cryptomonnaie;
 
         return $this;
     }
@@ -201,6 +180,90 @@ class Wallet
     public function setBlockchain(?Blockchain $blockchain): self
     {
         $this->blockchain = $blockchain;
+
+        return $this;
+    }
+
+    public function getTrading(): ?int
+    {
+        return ($this->trading==1)?1:0;
+    }
+
+    public function setTrading(int $trading): self
+    {
+        $this->trading = $trading;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getApikey(): ?string
+    {
+        return $this->apikey;
+    }
+
+    public function setApikey(string $apikey): self
+    {
+        $this->apikey = $apikey;
+
+        return $this;
+    }
+
+    public function getSecretkey(): ?string
+    {
+        return $this->secretkey;
+    }
+
+    public function setSecretkey(string $secretkey): self
+    {
+        $this->secretkey = $secretkey;
+
+        return $this;
+    }
+
+    public function getSill(): ?float
+    {
+        return $this->sill;
+    }
+
+    public function setSill(float $sill): self
+    {
+        $this->sill = $sill;
+
+        return $this;
+    }
+
+    public function getBalance(): ?float
+    {
+        return $this->balance;
+    }
+
+    public function setBalance(float $balance): self
+    {
+        $this->balance = $balance;
+
+        return $this;
+    }
+
+    public function getCurrency(): ?Cryptomonnaie
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(?Cryptomonnaie $currency): self
+    {
+        $this->currency = $currency;
 
         return $this;
     }

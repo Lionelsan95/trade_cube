@@ -6,9 +6,21 @@ use App\Repository\CryptomonnaieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass=CryptomonnaieRepository::class)
+ *
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get"={"get"={"method"="POST"}},
+ *     },
+ *     itemOperations={
+ *          "get"
+ *     }
+ * )
  */
 class Cryptomonnaie
 {
@@ -21,6 +33,11 @@ class Cryptomonnaie
 
     /**
      * @ORM\Column(type="string", length=20)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min=2,
+     *     max=20
+     * )
      */
     private $name;
 
@@ -31,6 +48,7 @@ class Cryptomonnaie
 
     /**
      * @ORM\Column(type="string", length=5)
+     * @Assert\Currency()
      */
     private $symbol;
 

@@ -10,7 +10,7 @@ class WalletTest extends TestCase
     public function testToString()
     {
         $wallet = new Wallet();
-        $wallet->setNom('Wallet 1');
+        $wallet->setName('Wallet 1');
 
         $this->assertEquals('Wallet 1', $wallet->__toString());
     }

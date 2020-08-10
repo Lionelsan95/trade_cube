@@ -6,9 +6,21 @@ use App\Repository\BlockchainRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass=BlockchainRepository::class)
+ *
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get"={"get"={"method"="POST"}},
+ *     },
+ *     itemOperations={
+ *          "get"
+ *     }
+ * )
  */
 class Blockchain
 {
@@ -21,11 +33,21 @@ class Blockchain
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *     min=2,
+     *     max=50
+     * )
      */
-    private $nom;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min=10,
+     *     max=100
+     * )
      */
     private $cle_api;
 
@@ -44,7 +66,7 @@ class Blockchain
      */
     public function __toString()
     {
-        return (string) $this->getNom();
+        return (string) $this->getName();
     }
 
     public function getId(): ?int
@@ -62,6 +84,10 @@ class Blockchain
         $this->cle_api = $cle_api;
 
         return $this;
+    }
+
+    public function postUpdate(){
+
     }
 
     /**
@@ -95,14 +121,14 @@ class Blockchain
         return $this;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): self
+    public function setName(string $name): self
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }

@@ -9,19 +9,31 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-toggle/2.2.2/css/bootstrap-toggle.css">
     {% endblock %}
 </head>
-<body>
+<body style="padding: 20px">
 <div>
     <a href="{{ path("user_index") }}">Accueil</a>
 
     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-        <a href="{{ path('user_edit', {'id': app.user.id}) }}">Modifier informations</a>
 
-        {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-        <a href="{{ path('fos_user_security_logout') }}">
-            {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-        </a>
+        <div class="btn-group" style="float: right">
+            <button type="button" class="btn btn-secondary">{{ app.user.username }}</button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                <a class="dropdown-item" href="{{ path('user_parametre') }}">
+                    <i class="fa fa-cog" aria-hidden="true"></i>
+                    Paramètres
+                </a>
+                <a class="dropdown-item" href="{{ path('security_logout') }}">
+                    <i class="fa fa-power-off" aria-hidden="true"></i>
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+            </div>
+        </div>
+
     {% elseif app.request.get('_route') != "user_login" %}
-        <a href="{{ path('user_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+        <a href="{{ path('security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
     {% endif %}
 </div>
 

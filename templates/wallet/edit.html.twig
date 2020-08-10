@@ -11,3 +11,20 @@
 
     {{ include('wallet/_delete_form.html.twig') }}
 {% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+
+            $("#wallet_user, #wallet_blockchain, #wallet_cryptomonnaie")
+                .parent('div').css('display','none');
+
+            $("#wallet>div").addClass('form-group');
+            $("#wallet>div>input").addClass('form-control');
+            $("#wallet>div>select").addClass('custom-select');
+
+        });
+    </script>
+{% endblock %}

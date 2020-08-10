@@ -1,8 +1,45 @@
 {% extends 'base.html.twig' %}
+{% trans_default_domain 'FOSUserBundle' %}
 
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
-    <br/><a href="{{ path("user_registration") }}">Inscription</a><br/><br/>
-    {{ include('@FOSUser/Security/login_content.html.twig') }}
+    <a href="{{ path("user_registration") }}">Inscription</a><br/><br/>
+
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    <form action="{{ path("fos_user_security_check") }}" method="post">
+        {% if csrf_token %}
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+        {% endif %}
+
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">Connexion</div>
+                <div class="card-body">
+                    {#<h5 class="card-title">Informations utilisateurs</h5>#}
+                    <div class="card-text">
+                        <div class="form-group row">
+                            <label class="col-sm-3" for="username">{{ 'security.login.username'|trans }}</label>
+                            <input class="col-sm-9" type="text" id="username" name="_username" value="{{ last_username }}" required="required" autocomplete="username" />
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3" for="password">{{ 'security.login.password'|trans }}</label>
+                            <input class="col-sm-9" type="password" id="password" name="_password" required="required" autocomplete="current-password" />
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3" for="remember_me">{{ 'security.login.remember_me'|trans }}</label>
+                            <input class="col-sm-1" type="checkbox" id="remember_me" name="_remember_me" value="on" />
+                        </div>
+                        <input class="btn btn-primary" type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
 {% endblock body %}

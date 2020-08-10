@@ -5,3 +5,19 @@
 {% block body %}
     {% include "@FOSUser/Registration/register_content.html.twig" %}
 {% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+
+            $('input').addClass('form-control');
+
+            $('input:submit')
+                .removeClass('form-control')
+                .addClass('btn btn-primary')
+                .parent('div').prepend('<br/>');
+
+        });
+    </script>
+{% endblock %}

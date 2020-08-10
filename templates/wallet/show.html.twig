@@ -5,9 +5,7 @@
 {% block body %}
     <h1>Wallet</h1>
 
-    <a href="{{ path('user_index') }}"><i class="fa fa-arrow-left fa-2x" aria-hidden="true"></i></a>
-
-    <a href="{{ path('wallet_edit', {'id': wallet.id}) }}"><i class="fas fa-edit fa-2x" aria-hidden="true"></i></a><br><br>
+    <a class="btn btn-primary" href="{{ path('wallet_edit', {'id': wallet.id}) }}"><i class="fas fa-edit" aria-hidden="true"></i> Modifier</a><br><br>
 
     <div id="curve_chart" style="width: 900px; height: 500px"></div>
 
@@ -19,7 +17,7 @@
             </tr>
             <tr>
                 <th>Nom</th>
-                <td>{{ wallet.nom }}</td>
+                <td>{{ wallet.name }}</td>
             </tr>
             <tr>
                 <th>Signature</th>
@@ -27,15 +25,15 @@
             </tr>
             <tr>
                 <th>Cle_prive</th>
-                <td>{{ wallet.clePrive }}</td>
+                <td>{{ wallet.secretkey }}</td>
             </tr>
             <tr>
                 <th>Cle_public</th>
-                <td>{{ wallet.clePublic }}</td>
+                <td>{{ wallet.apikey }}</td>
             </tr>
             <tr>
                 <th>Seuil</th>
-                <td>{{ wallet.seuil }}</td>
+                <td>{{ wallet.sill }}</td>
             </tr>
             <tr>
                 <th>Tranche</th>
@@ -43,11 +41,11 @@
             </tr>
             <tr>
                 <th>Solde</th>
-                <td>{{ wallet.solde }}</td>
+                <td>{{ wallet.balance }}</td>
             </tr>
             <tr>
                 <th>Cryptomonnaie</th>
-                <td>{{ wallet.cryptomonnaie.name }} - {{ wallet.cryptomonnaie.symbol }}</td>
+                <td>{{ wallet.currency.name }} - {{ wallet.currency.symbol }}</td>
             </tr>
         </tbody>
     </table>
@@ -63,7 +61,7 @@
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
-            let title = "Cours de change {{ wallet.cryptomonnaie.name }}",
+            let title = "Cours de change {{ wallet.currency.name }}",
                 datum = Array(Array.of('Date', 'Euros')),
                 data  = null,
                 options = {

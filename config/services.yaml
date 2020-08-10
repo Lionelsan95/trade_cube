@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     mailer_user: "lowono@hcub3.fr"
+    passphrase: "Hcub3"
 
 services:
     # default configuration for services in *this* file
@@ -20,15 +21,24 @@ services:
             - '../src/{DependencyInjection,Entity,Tests,Kernel.php}'
             - '../src/Service/{API.php,KrakenAPI.php,KrakenAPIException.php}'
 
-    blockchain:
-        alias: App\Service\BlockChain
+    bchain:
+        alias: App\Service\BChain
         public: true
 
     trade.kraken:
         alias: App\Service\Kraken
         public: true
 
+    crontab:
+        alias: App\Service\CronTab
+        public: true
 
+    App\EventListener\WalletListener:
+        tags:
+            -
+                name: 'doctrine.orm.entity_listener'
+                event: 'postUpdate'
+                entity: 'App\Entity\Wallet'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -38,10 +48,20 @@ services:
 
     App\Controller\UserController:
         arguments:
+            - '@security.password_encoder'
             - '@fos_user.registration.form.factory'
             - '@fos_user.user_manager'
             - '@event_dispatcher'
             - '@security.authentication_utils'
 
+    App\Controller\WalletController:
+        arguments:
+            - '@crontab'
+            - '@bchain'
+
+    App\Controller\APIController:
+        arguments:
+            - '@security.password_encoder'
+            - '@lexik_jwt_authentication.encoder'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
